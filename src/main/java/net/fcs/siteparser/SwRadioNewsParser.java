@@ -26,15 +26,21 @@ public class SwRadioNewsParser implements NewsParser {
             for (Element td : elements) {
                 if (td.getAttributeValue("height") != null && td.getAttributeValue("height").equals("26") &&
                     td.getAttributeValue("class") != null && td.getAttributeValue("class").equals("entry")) {
-                    Element anchor = td.getFirstElement("a");
-                    String headline = anchor.getContent().getTextExtractor().toString();
-                    String body = td.getContent().getTextExtractor().toString();
-                    newsItems.add(new NewsItem(headline,body,anchor.getAttributeValue("href")));
+                    NewsItem newsItem = createNewsItemFromTd(td);
+                    newsItems.add(newsItem);
                 }
             }
         }
         return newsItems;
 
+    }
+
+    private NewsItem createNewsItemFromTd(Element td) {
+        Element anchor = td.getFirstElement("a");
+        String headline = anchor.getContent().getTextExtractor().toString();
+        String body = td.getContent().getTextExtractor().toString();
+        String href = anchor.getAttributeValue("href");
+        return new NewsItem(headline, body, href);
     }
 
     private Element getNewsTable(Source source) {
