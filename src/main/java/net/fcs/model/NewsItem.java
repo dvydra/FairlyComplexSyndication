@@ -1,4 +1,4 @@
-package net.fcs.siteparser;
+package net.fcs.model;
 
 public class NewsItem {
     private String headline;

@@ -1,5 +1,6 @@
 package net.fcs.siteparser;
 
+import net.fcs.model.NewsItem;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 

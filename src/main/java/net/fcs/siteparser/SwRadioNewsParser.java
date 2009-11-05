@@ -1,8 +1,7 @@
 package net.fcs.siteparser;
 
+import net.fcs.model.NewsItem;
 import net.htmlparser.jericho.Element;
-import net.htmlparser.jericho.MasonTagTypes;
-import net.htmlparser.jericho.MicrosoftTagTypes;
 import net.htmlparser.jericho.Source;
 
 import java.util.ArrayList;
@@ -16,18 +15,14 @@ public class SwRadioNewsParser implements NewsParser {
 
     public List<NewsItem> processNews(String html) {
         ArrayList<NewsItem> newsItems = new ArrayList<NewsItem>();
-        MicrosoftTagTypes.register();
-        MasonTagTypes.register();
         Source source = new Source(html);
-        //List<Element> elementList=source.getAllElements();
+
         Element table = getNewsTable(source);
         if (table != null) {
             List<Element> elements = table.getAllElements("td");
             for (Element td : elements) {
-                if (td.getAttributeValue("height") != null && td.getAttributeValue("height").equals("26") &&
-                    td.getAttributeValue("class") != null && td.getAttributeValue("class").equals("entry")) {
-                    NewsItem newsItem = createNewsItemFromTd(td);
-                    newsItems.add(newsItem);
+                if (isPostCell(td)) {
+                    newsItems.add(createNewsItemFromTd(td));
                 }
             }
         }
@@ -41,6 +36,13 @@ public class SwRadioNewsParser implements NewsParser {
         String body = td.getContent().getTextExtractor().toString();
         String href = anchor.getAttributeValue("href");
         return new NewsItem(headline, body, href);
+    }
+
+    private boolean isPostCell(Element element) {
+        return element.getAttributeValue("height") != null &&
+                element.getAttributeValue("height").equals("26") &&
+                element.getAttributeValue("class") != null &&
+                element.getAttributeValue("class").equals("entry");
     }
 
     private Element getNewsTable(Source source) {
